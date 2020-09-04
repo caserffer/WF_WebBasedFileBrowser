@@ -1,5 +1,7 @@
 import json
 import os
+import xmind
+import pipes
 import shutil
 from django.http import HttpResponse, Http404, FileResponse
 from django.utils.encoding import escape_uri_path
@@ -149,7 +151,12 @@ class fileOperator:
             else:
                 os.mkdir(os.path.dirname(path) + "/newFolder")
 
+class xmindParser:
+    def __init__(self, path=None):
+        self.path = path
 
+    def dict_to_prettify_json(data):
+        print(json.dumps(data, indent=4, separators=(',', ': ')))
 
 if __name__ == "__main__":
     test = fileOperator()

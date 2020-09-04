@@ -181,6 +181,8 @@ def previewFiles(req):
     ext = os.path.splitext(path)[1][1:].lower()
     imgExtList = ["jpg", "png", "bmp"]
     textExtList = ["txt", "ini", "inf", "py", "c", "cpp", "java", "conf"]
+    officeExtList = []
+    xmindExtList = ["xmind"]
     if ext in imgExtList:
         with open(path, 'rb') as f:
             image_data = f.read()
@@ -209,6 +211,22 @@ def previewFiles(req):
             "type": 'text'
         }
         return HttpResponse(json.dumps(response), content_type="application/json")
+
+    if ext in xmindExtList:
+        xmind_dic = {}
+        try:
+            workbook = xmind.load(path)
+            jsonstr = workbook.to_prettify_json()
+            print(jsonstr)
+        except Exception:
+            print("error !")
+        response = {
+            "file": jsonstr,
+            "type": 'text'
+        }
+        return HttpResponse(json.dumps(response), content_type="application/json")
+
+
     response = {
         "file": "Unsupport file \n 不支持的文件类型",
         "type": 'error'
