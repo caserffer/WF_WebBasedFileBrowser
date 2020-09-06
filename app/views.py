@@ -10,6 +10,8 @@ import tempfile, zipfile
 from wsgiref.util import FileWrapper
 import os
 import json
+import xmind
+import pipes
 import base64
 
 # Create your views here.
@@ -215,14 +217,14 @@ def previewFiles(req):
     if ext in xmindExtList:
         xmind_dic = {}
         try:
+            print(path)
             workbook = xmind.load(path)
-            jsonstr = workbook.to_prettify_json()
-            print(jsonstr)
+            print(workbook.to_prettify_json())
         except Exception:
             print("error !")
         response = {
-            "file": jsonstr,
-            "type": 'text'
+            "data": workbook.to_prettify_json(),
+            "type": 'xmind'
         }
         return HttpResponse(json.dumps(response), content_type="application/json")
 

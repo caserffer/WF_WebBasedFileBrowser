@@ -42,6 +42,8 @@ def custom_parse_xmind(workbook):
 
             print('Relationship: [%s] --> [%s]' % (elements.get(id1), elements.get(id2)))
 
+
+
     # 遍历画布
 
     for sheet in workbook.getSheets():
@@ -52,11 +54,11 @@ def custom_parse_xmind(workbook):
 
 # 加载已有xmind文件，如果不存在，则新建
 
-workbook = xmind.load('D:\\web_file_root\\SC-TestCase\\00_基础功能\\002 协议\\00203 HLS\\16 QUIC\\1.xmind')
+workbook = xmind.load('static/my.xmind')
 
-print(workbook.getData())  # 获取整个xmind数据(字典的形式)
+# print(workbook.getData())  # 获取整个xmind数据(字典的形式)
 
-# dict_to_prettify_json(workbook.getData())
+dict_to_prettify_json(workbook.getData())
 
 # # 获取某个画布的数据(字典的形式)
 #
