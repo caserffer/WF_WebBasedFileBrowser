@@ -33,10 +33,6 @@
             height: 800px;
             text-align: left;
         }
-        html, body, #jsmind_container {
-        width: 100%;
-        height: 100%;
-        }
     </style>
     <SCRIPT type="text/javascript">
         var setting = {
@@ -407,6 +403,9 @@
                     backJson = JSON.parse(backJsonStr);
                     if (backJson['type'] === "img") {
                         previewDiv = document.getElementById("preview");
+                        jsmindContainerDiv = document.getElementById("jsmind_container");
+                        jsmindContainerDiv.removeAttribute("style");
+                        jsmindContainerDiv.innerHTML = "";
                         previewDiv.innerHTML = "";
                         var img = new Image();
                         img.src = backJson['file'];
@@ -419,6 +418,9 @@
                     }
                     if (backJson['type'] === "text") {
                         previewDiv = document.getElementById("preview");
+                        jsmindContainerDiv = document.getElementById("jsmind_container");
+                        jsmindContainerDiv.removeAttribute("style");
+                        jsmindContainerDiv.innerHTML = "";
                         previewDiv.innerHTML = "";
                         div = document.createElement("div");
                         div.classList.add("mdui-textfield");
@@ -441,54 +443,22 @@
                     }
                     if (backJson['type'] === "xmind")
                     {
+                        console.log(backJson['data'])
+                        jsmindContainerDiv = document.getElementById("jsmind_container");
+                        previewDiv = document.getElementById("preview");
+                        previewDiv.innerHTML = "";
+                        jsmindContainerDiv.style.width='850px';
+                        jsmindContainerDiv.style.height='620px';
+                        jsmindContainerDiv.style.backgroundColor='#f4f4f4'
+                        jsmindContainerDiv.style.border='solid 1px #ccc'
                         var mind = {
                         "meta": {
                             "name": "jsMind remote",
                             "author": "hizzgdev@163.com",
                             "version": "0.2"
                         },
-                        "format": "node_tree",
-                        "data": {
-                            "id": "root", "topic": "新员工入职", "children": [
-                                {
-                                    "id": "easy", "topic": "规章制度", "direction": "right", "children": [
-                                        {"id": "easy1", "topic": "请休假制度"},
-                                        {"id": "easy2", "topic": "考勤制度"}
-                                    ]
-                                },
-                                {
-                                    "id": "open", "topic": "岗位职责", "direction": "right", "children": [
-                                        {
-                                            "id": "open1", "topic": "人事部职责", "background-color": "#eee", "foreground-color": "blue",
-                                            "children": [
-                                                {"id": "open1-1", "topic": "行政管理"},
-                                                {"id": "open1-2", "topic": "人事管理"}
-                                            ]
-                                        },
-                                        {"id": "open2", "topic": "信息部职责"},
-                                        {
-                                            "id": "open3", "topic": "生产车间", "children": [
-                                                {"id": "open3-1", "topic": "安全制度"},
-                                                {"id": "open3-2", "topic": "车间操作手册"}
-                                            ]
-                                        }
-                                    ]
-                                },
-                                {
-                                    "id": "powerful", "topic": "员工福利", "direction": "right", "children": [
-                                        {"id": "powerful1", "topic": "五险一金"},
-                                        {"id": "powerful2", "topic": "年休假"},
-                                        {"id": "powerful3", "topic": "法定节假日"},
-                                        {"id": "powerful4", "topic": "生日祝福"},
-                                        {
-                                            "id": "powerful5", "topic": "成长与进步", "children": [
-                                                {"id": "powerful5-1", "topic": "员工培训"}
-                                            ]
-                                        }
-                                    ]
-                                },
-                            ]
-                        }
+                        "format": "node_array",
+                        "data":backJson['data']
                     }
                     // jsMind的选项，更多参数参见jsMind的文档
                     // https://github.com/hizzgdev/jsmind/blob/master/docs/zh/index.md
@@ -677,13 +647,14 @@
                     <div class="mdui-card-content">
                         <div id="preview" style="boeder:5px">
                         </div>
+                        <div id="jsmind_container"></div>
                     </div>
                 </div>
             </div>
-            <div id="jsmind_container"></div>
         </div>
 
 
     </div>
+</div>
 </body>
 </html>

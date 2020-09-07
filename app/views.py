@@ -11,7 +11,8 @@ from wsgiref.util import FileWrapper
 import os
 import json
 import xmind
-import pipes
+from app import JsMind
+from app import models
 import base64
 
 # Create your views here.
@@ -35,13 +36,16 @@ def error(req):
 
 
 def isAuthenticated(username, password):
-    global userdata
-    if userdata == None:
-        with open("./app/userdata.conf") as config:
-            userdata = eval(config.read())
+    # global userdata
+    # if userdata == None:
+    #     with open("./app/userdata.conf") as config:
+    #         userdata = eval(config.read())
     try:
-        if userdata[username] == password:
+        login_user_obj = User.objects.get(user_name=username)
+        if login_user_obj.password == password:
             return True
+        else:
+            return False
     except Exception:
         return False
 
@@ -215,15 +219,16 @@ def previewFiles(req):
         return HttpResponse(json.dumps(response), content_type="application/json")
 
     if ext in xmindExtList:
-        xmind_dic = {}
         try:
-            print(path)
-            workbook = xmind.load(path)
-            print(workbook.to_prettify_json())
+            # print(path)
+            # workbook = xmind.load(path)
+            # print(workbook.to_prettify_json())
+            js_mind = JsMind.parse_xmind_to_jsmind()
+            js_mind.load_xmind_file(path)
         except Exception:
             print("error !")
         response = {
-            "data": workbook.to_prettify_json(),
+            "data": js_mind.jsmind_json,
             "type": 'xmind'
         }
         return HttpResponse(json.dumps(response), content_type="application/json")

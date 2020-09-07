@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>jsMind</title>
+    <link rel="stylesheet" href="../app/static/css/jsmind.css" type="text/css">
+    <style type="text/css">
+        #jsmind_container{
+            width:800px;
+            height:500px;
+            border:solid 1px #ccc;
+            /*background:#f4f4f4;*/
+            background:#f4f4f4;
+        }
+    </style>
+</head>
+<body>
+<div id="jsmind_container"></div>
+<script type="text/javascript" src="../app/static/js/jsmind.js"></script>
+<script type="text/javascript" src="../app/static/js/jsmind.draggable.js"></script>
+<script type="text/javascript" src="../app/static/js/jsmind.shell.js"></script>
+<script type="text/javascript">
+    function load_jsmind(){
+        var mind = {
+            "meta":{
+                "name":"demo",
+                "author":"hizzgdev@163.com",
+                "version":"0.2",
+            },
+            "format":"node_array",
+            "data":[{'id': '2a1df7jpugkmnr2oqpap4uo1m8', 'isroot': true, 'topic': 'SC-2164'}, {'id': '596nuuo0as0nt5g4i4npnhigmt', 'parentid': '2a1df7jpugkmnr2oqpap4uo1m8', 'topic': '需求描述', 'direction': 'right'}, {'id': '7jeu2fk6rilutfol7e9cs435b5', 'parentid': '596nuuo0as0nt5g4i4npnhigmt', 'topic': '当前quic推拉流都是通过本地127.0.0.1转发请求给后端sc，sc记录的serverip都为127.0.0.1，会导致这部分日志全部都记录到sc中国大陆的日志包里面，可能影响用户计费，故需调整', 'direction': 'right'}, {'id': '1og2sfskcvhogkedp35eura0qm', 'parentid': '596nuuo0as0nt5g4i4npnhigmt', 'topic': '只针对quic协议推拉流的场景，并且serverip为127.0.0.1的话，直接将serverip置换为服务ip', 'direction': 'right'}, {'id': '09mbq4asadcreef3lef3b538bk', 'parentid': '2a1df7jpugkmnr2oqpap4uo1m8', 'topic': '备注', 'direction': 'right'}, {'id': '35uoqque141gtlf1ddtgt2j3r2', 'parentid': '09mbq4asadcreef3lef3b538bk', 'topic': 'wscaddy有两种代理模式 streampoxy模式和proxy模式，目前SC暂不支持从proxy模式判断是否为quic流，故该场景下127未被替换为真实ip', 'direction': 'right'}, {'id': '0n172qai0v5jmfdjfamu583c5u', 'parentid': '09mbq4asadcreef3lef3b538bk', 'topic': '如果推流机确实在本机使用127ip推流，那么也会被SC置换为真实ip，由于在线上并无该场景，故在jira上备注即可', 'direction': 'right'}, {'id': '0c1c9h9clnl09lhh9qm4v3uv7p', 'parentid': '2a1df7jpugkmnr2oqpap4uo1m8', 'topic': '测试用例', 'direction': 'right'}, {'id': '20l7gqabmv6p8tfqgnpg95as0r', 'parentid': '0c1c9h9clnl09lhh9qm4v3uv7p', 'topic': '主功能测试', 'direction': 'right'}, {'id': '3oj8connuu9hm5eckkempvhpk7', 'parentid': '20l7gqabmv6p8tfqgnpg95as0r', 'topic': 'sc和wscaddy在同一台机器上\r\nwscaddy代理到sc的ip配置为127.0.0.1', 'direction': 'right'}, {'id': '7k52uhdhuhmels5ajktnabfbab', 'parentid': '3oj8connuu9hm5eckkempvhpk7', 'topic': 'wscaddy streamproxy代理模式\r\n(tcp over quic)', 'direction': 'right'}, {'id': '4njlaj8t7nv7oogi4kte47m478', 'parentid': '7k52uhdhuhmels5ajktnabfbab', 'topic': '推流', 'direction': 'right'}, {'id': '5bihiqsnclfvvicebjiessf44s', 'parentid': '4njlaj8t7nv7oogi4kte47m478', 'topic': 'rmtp推流', 'direction': 'right'}, {'id': '2ch16f49dck2ppnuuun23nrsql', 'parentid': '4njlaj8t7nv7oogi4kte47m478', 'topic': 'hdl推流', 'direction': 'right'}, {'id': '01cc8vennu4gb9gfra8upgmg4q', 'parentid': '7k52uhdhuhmels5ajktnabfbab', 'topic': '拉流', 'direction': 'right'}, {'id': '1r88ia29c6lvp9obtahlda6235', 'parentid': '01cc8vennu4gb9gfra8upgmg4q', 'topic': 'rmtp拉流', 'direction': 'right'}, {'id': '1hqs0obu3idaf6k893bt6of5n0', 'parentid': '01cc8vennu4gb9gfra8upgmg4q', 'topic': 'hdl拉流', 'direction': 'right'}, {'id': '2ikop2i88qvinold5e44pm8ujk', 'parentid': '01cc8vennu4gb9gfra8upgmg4q', 'topic': 'hls拉流', 'direction': 'right'}, {'id': '6umhio1epaieivvk6jsd4gmu1e', 'parentid': '20l7gqabmv6p8tfqgnpg95as0r', 'topic': 'sc和wscaddy在同一台机器上\r\nwscaddy代理到sc的ip配置为真实ip', 'direction': 'right'}, {'id': '0nc41c87ikb3om10cfjdggij2a', 'parentid': '6umhio1epaieivvk6jsd4gmu1e', 'topic': 'wscaddy streamproxy代理模式\r\n(tcp over quic)', 'direction': 'right'}, {'id': '4dftijst62v0ucj9laocaoqif4', 'parentid': '0nc41c87ikb3om10cfjdggij2a', 'topic': '推流', 'direction': 'right'}, {'id': '6qkjod1mnj9l93mdna4f28kglu', 'parentid': '4dftijst62v0ucj9laocaoqif4', 'topic': 'rmtp推流', 'direction': 'right'}, {'id': '011djtm4k3dr3pbk7dvatnrg9u', 'parentid': '4dftijst62v0ucj9laocaoqif4', 'topic': 'hdl推流', 'direction': 'right'}, {'id': '7mu8io9r7dcsiml7dnacjjm91f', 'parentid': '0nc41c87ikb3om10cfjdggij2a', 'topic': '拉流', 'direction': 'right'}, {'id': '606qtt3h4tsgbr698l8773enuq', 'parentid': '7mu8io9r7dcsiml7dnacjjm91f', 'topic': 'rmtp拉流', 'direction': 'right'}, {'id': '1tuj1aisiv8n08t75o7sj6tevc', 'parentid': '7mu8io9r7dcsiml7dnacjjm91f', 'topic': 'hdl拉流', 'direction': 'right'}, {'id': '5ukffkia0m29nb2q74v1msin2e', 'parentid': '7mu8io9r7dcsiml7dnacjjm91f', 'topic': 'hls拉流', 'direction': 'right'}, {'id': '3ihvm2hv4c9g38cl7p7c90e3ia', 'parentid': '20l7gqabmv6p8tfqgnpg95as0r', 'topic': 'sc和wscaddy不在同一台机器上\r\nwscaddy代理到sc的ip配置为真实ip', 'direction': 'right'}, {'id': '6vhujgf5kuth1epi2u01ld0t7g', 'parentid': '3ihvm2hv4c9g38cl7p7c90e3ia', 'topic': 'wscaddy streamproxy代理模式\r\n(tcp over quic)', 'direction': 'right'}, {'id': '3gp4grmh0qldu76ick3sjaqf4h', 'parentid': '6vhujgf5kuth1epi2u01ld0t7g', 'topic': '推流', 'direction': 'right'}, {'id': '6e5ls47t0js1d3r40rc3ohsqkk', 'parentid': '3gp4grmh0qldu76ick3sjaqf4h', 'topic': 'rmtp推流', 'direction': 'right'}, {'id': '33pgt3nd83eua6puv7456u88bk', 'parentid': '3gp4grmh0qldu76ick3sjaqf4h', 'topic': 'hdl推流', 'direction': 'right'}, {'id': '1d8likul5ji10jjm4l9r9m8cm9', 'parentid': '6vhujgf5kuth1epi2u01ld0t7g', 'topic': '拉流', 'direction': 'right'}, {'id': '1517tmk1ba47lp9tes4cn28l3h', 'parentid': '1d8likul5ji10jjm4l9r9m8cm9', 'topic': 'rmtp拉流', 'direction': 'right'}, {'id': '4a9chogppjle5s8pt7crvmdrde', 'parentid': '1d8likul5ji10jjm4l9r9m8cm9', 'topic': 'hdl拉流', 'direction': 'right'}, {'id': '75npspdjnq150vgo2mlg3mflir', 'parentid': '1d8likul5ji10jjm4l9r9m8cm9', 'topic': 'hls拉流', 'direction': 'right'}, {'id': '1kmp4spie787t2uq7dvefmvu23', 'parentid': '0c1c9h9clnl09lhh9qm4v3uv7p', 'topic': '验证旧逻辑未被影响', 'direction': 'right'}, {'id': '5e2fl4maesq4r764n7ts4qn8kl', 'parentid': '1kmp4spie787t2uq7dvefmvu23', 'topic': '用127.0.0.1推流、拉流', 'direction': 'right'}, {'id': '3meo82l3rcc43ugremgi0dl9n3', 'parentid': '5e2fl4maesq4r764n7ts4qn8kl', 'topic': '检查运行日志和访问日志中的serverip为 127.0.0.1', 'direction': 'right'}, {'id': '5ue8sl9ref6ntr3d61in4njhf5', 'parentid': '1kmp4spie787t2uq7dvefmvu23', 'topic': '用真实ip推流、拉流', 'direction': 'right'}, {'id': '63bsf2h3f085hr95p7jpjjnoce', 'parentid': '5ue8sl9ref6ntr3d61in4njhf5', 'topic': '检查运行日志和访问日志中的serverip为真实ip', 'direction': 'right'}]
+        };
+        var options = {
+            container:'jsmind_container',
+            editable:true,
+            theme:'primary'
+        }
+        var jm = jsMind.show(options,mind);
+        // jm.set_readonly(true);
+        // var mind_data = jm.get_data();
+        // alert(mind_data);
+    }
+
+    load_jsmind();
+</script>
+</body>
+</html>

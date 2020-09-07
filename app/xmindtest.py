@@ -54,7 +54,7 @@ def custom_parse_xmind(workbook):
 
 # 加载已有xmind文件，如果不存在，则新建
 
-workbook = xmind.load('static/my.xmind')
+workbook = xmind.load('1.xmind')
 
 # print(workbook.getData())  # 获取整个xmind数据(字典的形式)
 
