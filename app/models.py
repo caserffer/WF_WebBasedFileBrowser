@@ -15,4 +15,4 @@ class User(models.Model):
     email = models.CharField(max_length=50, db_column='email')
 
     def __str__(self):
-        return self.user_num.encode('utf-8')
+        return self.user_name.encode('utf-8')

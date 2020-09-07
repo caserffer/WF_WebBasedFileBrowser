@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'app',
 ]
 
 MIDDLEWARE = [
@@ -79,7 +80,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'casefileplat',
         'USER': 'root',
-        'PASSWORD':'06rpqPPSLfp',
+        'PASSWORD':'123456',
         'HOST':'localhost',
         'PORT':'3306',
     }

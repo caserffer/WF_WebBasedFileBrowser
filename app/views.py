@@ -41,8 +41,8 @@ def isAuthenticated(username, password):
     #     with open("./app/userdata.conf") as config:
     #         userdata = eval(config.read())
     try:
-        login_user_obj = User.objects.get(user_name=username)
-        if login_user_obj.password == password:
+        login_user_obj = models.User.objects.get(user_name=username)
+        if login_user_obj.pass_word == password:
             return True
         else:
             return False
