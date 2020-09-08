@@ -508,6 +508,32 @@
                     jm.expand_all();//展开全部节点
                     // jm.add_node(parent_node, nodeid, topic, data);//添加节点
                     }
+                    if (backJson['type'] === "pdf")
+                    {
+                        console.log(backJson['path'])
+                        previewDiv = document.getElementById("preview");
+                        jsmindContainerDiv = document.getElementById("jsmind_container");
+                        jsmindContainerDiv.removeAttribute("style");
+                        jsmindContainerDiv.innerHTML = "";
+                        previewDiv.innerHTML = "";
+                        div = document.createElement("div");
+                        {#div.classList.add("mdui-textfield");#}
+
+                        label = document.createElement("label");
+                        label.classList.add("mdui-textfield-label");
+                        label.innerText = "pdf文本预览";
+
+                        iframe = document.createElement("iframe");
+                        iframe.style.width='850px';
+                        iframe.style.height='620px';
+                        {#iframe.src = backJson['path']#}
+                        iframe.src = 'pdfjs/web/viewer.html?file=test.pdf'
+
+                        div.appendChild(label);
+                        div.appendChild(iframe);
+                        previewDiv.appendChild(div);
+                        mdui.mutation(div);
+                    }
                     if (backJson['type'] === "error")
                         mdui.alert(backJson["file"], '错误');
 

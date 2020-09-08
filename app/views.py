@@ -10,9 +10,10 @@ import tempfile, zipfile
 from wsgiref.util import FileWrapper
 import os
 import json
-import xmind
 from app import JsMind
+from app import PdfConverter
 from app import models
+import threading
 import base64
 
 # Create your views here.
@@ -184,10 +185,11 @@ def uploadFiles(req):
 @needUserCookies
 def previewFiles(req):
     path = req.POST.get("path", None)
+    pdfpath = ""
     ext = os.path.splitext(path)[1][1:].lower()
     imgExtList = ["jpg", "png", "bmp"]
     textExtList = ["txt", "ini", "inf", "py", "c", "cpp", "java", "conf"]
-    officeExtList = []
+    officeExtList = ["doc", "docx", "ppt", "pptx", "xls", "xlsx"]
     xmindExtList = ["xmind"]
     if ext in imgExtList:
         with open(path, 'rb') as f:
@@ -232,6 +234,28 @@ def previewFiles(req):
             "type": 'xmind'
         }
         return HttpResponse(json.dumps(response), content_type="application/json")
+
+    if ext in officeExtList:
+        try:
+            t1 = PdfConverter.PdfConverter(path)
+            t1.start()
+            t1.join()
+            with open(path, 'rb') as pdf:
+                response = HttpResponse(pdf.read(), mimetype='application/pdf')
+                response['Content-Disposition'] = 'inline;filename=some_file.pdf'
+                return response
+            pdf.closed
+        except Exception:
+            print("error !")
+        # response = {
+        #     # "path": t1.get_result(),
+        #     "path": "test.pdf",
+        #     "type": 'pdf'
+        # }
+        # return HttpResponse(json.dumps(response), content_type="application/json")
+        # return response
+
+
 
 
     response = {

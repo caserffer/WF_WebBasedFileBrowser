@@ -1,8 +1,16 @@
+# -*- encoding: utf-8 -*-
+'''
+@File    :   PdfConverter.py
+@Contact :   test@test.com
+@License :   (C)Copyright 2020-2021, test
+
+@Modify Time      @Author    @Version    @Desciption
+------------      -------    --------    -----------
+2020/9/8 14:24   test      1.0         None
+'''
+
 import json
-
 import xmind
-
-
 
 class parse_xmind_to_jsmind():
     '''
