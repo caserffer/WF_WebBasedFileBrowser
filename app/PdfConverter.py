@@ -14,6 +14,7 @@
 import threading
 import os
 import pythoncom
+
 from win32com.client import Dispatch, constants, gencache, DispatchEx
 
 
@@ -21,6 +22,9 @@ class PdfConverter(threading.Thread):
     def __init__(self, office_file_path):
         threading.Thread.__init__(self)
         self.pdf_path = ""
+        self.root_path = "D:\web_file_root\SC-TestCase"
+        self.work_dir = "D:\pyproject\WF_WebBasedFileBrowser"
+        self.pdf_root = "static\pdfs"
         self.office_file_path = office_file_path
 
     def get_result(self):
@@ -36,16 +40,29 @@ class PdfConverter(threading.Thread):
         '''
         self.load_office_file(self.office_file_path)
         self.run_conver()
-        print(self.pdf_path)
+        print("pdf save path :"+self.pdf_path)
 
     def load_office_file(self, pathname):
         self._handle_postfix = ['doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx']
         self._filename_list = list()
         pathname = str(pathname)
         (filepath, tempfilename) = os.path.split(pathname)
-        self._export_folder = filepath
+        print(filepath)
+        filepath = filepath.replace(self.root_path, "")
+        print("替换root_path后的filepath:"+filepath)
+        # try:
+        #     with open("./app/rootpath.conf") as root:
+        #         self.root_path = root.read()
+        # except Exception:
+        #     print("rootpath.conf read error!")
+        #     raise
+        print("root_path:"+self.root_path)
+        print("_export_folder:"+self.work_dir+'/'+self.pdf_root+filepath)
+        self._export_folder = str(self.work_dir+'/'+self.pdf_root+filepath)
+        # self._export_folder = filepath
         if not os.path.exists(self._export_folder):
-            os.mkdir(self._export_folder)
+            os.makedirs(self._export_folder)
+            # os.mkdir(os.path.join(settings.USER_DIR_FLODER,card_num,'record'))
         self._enumerate_filename(pathname)
 
     def _enumerate_filename(self, pathname):
@@ -88,9 +105,11 @@ class PdfConverter(threading.Thread):
         '''
         doc 和 docx 文件转换
         '''
-        name = os.path.basename(filename).split('.')[0] + '.pdf'
+        # name = os.path.basename(filename).split('.')[0] + '.pdf'
+        name = self.exchange_suffix(filename)
         exportfile = os.path.join(self._export_folder, name)
         exportfile = str(exportfile)
+        pythoncom.CoInitialize()
         print('保存 PDF 文件：', exportfile)
         gencache.EnsureModule('{00020905-0000-0000-C000-000000000046}', 0, 8, 4)
         w = Dispatch("Word.Application")
@@ -100,6 +119,7 @@ class PdfConverter(threading.Thread):
                                 CreateBookmarks=constants.wdExportCreateHeadingBookmarks)
 
         w.Quit(constants.wdDoNotSaveChanges)
+        self.pdf_path = self.pdf_url_exchange(exportfile)
 
     def docx(self, filename):
         self.doc(filename)
@@ -124,7 +144,7 @@ class PdfConverter(threading.Thread):
         books.Close(False)
         print('保存 PDF 文件：', exportfile)
         xlApp.Quit()
-        self.pdf_path = exportfile
+        self.pdf_path = self.pdf_url_exchange(exportfile)
 
     def xlsx(self, filename):
         self.xls(filename)
@@ -159,19 +179,24 @@ class PdfConverter(threading.Thread):
         pdf_name = f + 'pdf'
         return  pdf_name
 
+    def pdf_url_exchange(self, filename):
+        return filename.replace(self.work_dir, "")
+
 
 
 # if __name__ == "__main__":
 #     # 支持文件夹批量导入
 #     folder = 'tmp'
 #     # pathname = os.path.join(os.path.abspath('.'), folder)
+#     # pathname = 'D:\1\2\3/00 123'
 #     pathname = 'D:\web_file_root\SC-TestCase/00_基础功能/001 配置/StreamCache配置项汇总-by黄美珊_2017.0323final.xlsx'
 #     # 也支持单个文件的转换
 #     # pathname = 'test.doc'
 #
 #     # pdfConverter = PdfConverter(pathname)
 #     # pdfConverter.run_conver()
-#     p = PdfConverter()
-#     p.load_office_file(pathname)
-#     p.run_conver()
+#     p = PdfConverter(pathname)
+#     p.start()
+#     p.join()
+
 

@@ -44,7 +44,7 @@
                 autoParam: ["path"],
             },
             check: {
-                enable: true
+                enable: false
             },
             edit: {
                 enable: true,
@@ -77,6 +77,7 @@
         }
 
         function beforeDrop(treeId, treeNodes, targetNode, moveType, isCopy) {
+            console.log("beforeDrop is useing")
             needCopyFileList = [];
             var zTree = $.fn.zTree.getZTreeObj("treeDemo");
             for (var j = 0, l1 = treeNodes.length; j < l1; j++) {
@@ -106,6 +107,7 @@
         }
 
         function setCheck() {
+            console.log("setCheck is useing")
             var zTree = $.fn.zTree.getZTreeObj("treeDemo"),
                 checktype = {"Y": "s", "N": "s"};
             zTree.setting.check.chkboxType = checktype;
@@ -113,6 +115,9 @@
         }
 
         function beforeRename(treeId, treeNode, newName, isCancel) {
+            console.log("beforeRename is useing")
+            {#console.log(treeNode)#}
+            {#console.log(newName)#}
             if (newName.length == 0) {
                 setTimeout(function () {
                     var zTree = $.fn.zTree.getZTreeObj("treeDemo");
@@ -129,11 +134,17 @@
                 if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
                     const backJsonStr = xmlhttp.responseText;
                     const backJson = JSON.parse(backJsonStr);
+                    if (backJson['ok']){
+                        return backJson['ok'];
+                    }else{
+                        return false;
+                    }
                 }
             };
             xmlhttp.send("originPath=" + treeNode.path + "&" + "newName=" + newName);
 
-            return true;
+
+            return true
         }
 
         function onRename(e, treeId, treeNode, isCancel) {
@@ -294,6 +305,7 @@
             }
 
             function beforeDrop(treeId, treeNodes, targetNode, moveType, isCopy) {
+                console.log("checkboxOnclick beforeDrop is useing")
                 needCopyFileList = [];
                 var zTree = $.fn.zTree.getZTreeObj("treeDemo");
                 for (var j = 0, l1 = treeNodes.length; j < l1; j++) {
@@ -323,6 +335,7 @@
             }
 
             function setCheck() {
+                console.log("checkboxOnclick setCheck is useing")
                 var zTree = $.fn.zTree.getZTreeObj("treeDemo"),
                     checktype = {"Y": "s", "N": "s"};
                 zTree.setting.check.chkboxType = checktype;
@@ -330,6 +343,7 @@
             }
 
             function beforeRename(treeId, treeNode, newName, isCancel) {
+                console.log("checkboxOnclick beforeRename is useing")
                 if (newName.length == 0) {
                     setTimeout(function () {
                         var zTree = $.fn.zTree.getZTreeObj("treeDemo");
@@ -349,7 +363,6 @@
                     }
                 };
                 xmlhttp.send("originPath=" + treeNode.path + "&" + "newName=" + newName);
-
                 return true;
             }
 
@@ -358,6 +371,7 @@
             }
 
             function onClick(event, treeId, treeNode, clickFlag) {
+                console.log("checkboxOnclick onClick is useing")
                 var pathInput = document.getElementById("pathInput");
                 pathInput.value = treeNode.path;
                 checkbox = document.getElementById("needPreview");
@@ -523,14 +537,22 @@
                         label.classList.add("mdui-textfield-label");
                         label.innerText = "pdf文本预览";
 
-                        iframe = document.createElement("iframe");
-                        iframe.style.width='850px';
-                        iframe.style.height='620px';
-                        {#iframe.src = backJson['path']#}
-                        iframe.src = 'pdfjs/web/viewer.html?file=test.pdf'
+                        object = document.createElement("object");
+                        a = document.createElement("a");
+                        a.href = backJson['path']
+                        a.charset = "UTF-16"
+                        {#a.charset = 'gb2312'#}
+                        {#a.href = 'static/test.pdf'#}
+                        object.appendChild(a)
+                        object.style.width='850px';
+                        object.charset = "UTF-16"
+                        object.style.height='620px';
+                        object.data = backJson['path']
+                        object.type = "application/pdf"
+                        {#object.data = 'static/test.pdf'#}
 
                         div.appendChild(label);
-                        div.appendChild(iframe);
+                        div.appendChild(object);
                         previewDiv.appendChild(div);
                         mdui.mutation(div);
                     }
@@ -560,12 +582,12 @@
             xmlhttp.open("POST", "./mkdir", true);
             xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
             xmlhttp.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
-            xmlhttp.onreadystatechange = function () {
-                if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
-                    const backJsonStr = xmlhttp.responseText;
-                    const backJson = JSON.parse(backJsonStr);
-                }
-            };
+            {#xmlhttp.onreadystatechange = function () {#}
+            {#    if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {#}
+            {#        const backJsonStr = xmlhttp.responseText;#}
+            {#        const backJson = JSON.parse(backJsonStr);#}
+            {#    }#}
+            {# }; #}
             xmlhttp.send("path=" + path);
             sleep(1000);
             location.reload();

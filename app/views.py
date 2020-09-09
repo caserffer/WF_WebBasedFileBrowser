@@ -80,6 +80,7 @@ def main(req):
             rootpath=root.read()
     except Exception:
         pass
+    print("view.rootpath"+rootpath)
     Folder = Utils.Folder(rootpath)
     dataJson = Folder.getFolderJson()
     language=req.COOKIES.get('language')
@@ -116,10 +117,22 @@ def deleteFiles(req):
 @needUserCookies
 def renameFiles(req):
     originPath = req.POST.get('originPath', None)
+    print("originPath:"+originPath)
     newname = req.POST.get('newName', None)
-    os.rename(originPath, os.path.split(originPath)[0] + "/" + newname)
+    print("newname:"+newname)
+    try:
+        # test = os.path.split(originPath)[0]
+        # print(test)
+        renamePath = os.path.split(originPath)[0] + "/" + newname
+        print("rename path:"+renamePath)
+        print(os.getpid())
+        os.rename(str(originPath), str(renamePath))
+        result = True
+    except BaseException as err:
+        result = False
+        print(err)
     response = {
-        "ok": True,
+        "ok": result,
 
     }
     return HttpResponse(json.dumps(response), content_type="application/json")
@@ -185,7 +198,6 @@ def uploadFiles(req):
 @needUserCookies
 def previewFiles(req):
     path = req.POST.get("path", None)
-    pdfpath = ""
     ext = os.path.splitext(path)[1][1:].lower()
     imgExtList = ["jpg", "png", "bmp"]
     textExtList = ["txt", "ini", "inf", "py", "c", "cpp", "java", "conf"]
@@ -240,20 +252,19 @@ def previewFiles(req):
             t1 = PdfConverter.PdfConverter(path)
             t1.start()
             t1.join()
-            with open(path, 'rb') as pdf:
-                response = HttpResponse(pdf.read(), mimetype='application/pdf')
-                response['Content-Disposition'] = 'inline;filename=some_file.pdf'
-                return response
-            pdf.closed
+            # with open(path, 'rb') as pdf:
+            #     response = HttpResponse(pdf.read(), mimetype='application/pdf')
+            #     response['Content-Disposition'] = 'inline;filename=some_file.pdf'
+            #     return response
+            # pdf.closed
         except Exception:
             print("error !")
-        # response = {
-        #     # "path": t1.get_result(),
-        #     "path": "test.pdf",
-        #     "type": 'pdf'
-        # }
-        # return HttpResponse(json.dumps(response), content_type="application/json")
-        # return response
+        response = {
+            "path": t1.get_result(),
+            # "path": "test.pdf",
+            "type": 'pdf'
+        }
+        return HttpResponse(json.dumps(response), content_type="application/json")
 
 
 
@@ -263,3 +274,4 @@ def previewFiles(req):
         "type": 'error'
     }
     return HttpResponse(json.dumps(response), content_type="application/json")
+

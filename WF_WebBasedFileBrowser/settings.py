@@ -80,9 +80,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'casefileplat',
         'USER': 'root',
-        'PASSWORD':'123456',
+        'PASSWORD':'06rpqPPSLfp',
         'HOST':'localhost',
-        'PORT':'3306',
+        'PORT':'60036',
     }
 }
 
@@ -127,5 +127,5 @@ STATIC_URL = '/static/'
 HERE = os.path.dirname(os.path.abspath(__file__))
 HERE = os.path.join(HERE, '../')
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'app/static'),
+    os.path.join(BASE_DIR, 'static'),
 )
