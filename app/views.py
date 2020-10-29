@@ -1,5 +1,7 @@
 'django.middleware.csrf.CsrfViewMiddleware'
 from django.shortcuts import render
+from app import logUtil
+import platform
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 from app import Utils
@@ -44,8 +46,10 @@ def isAuthenticated(username, password):
     try:
         login_user_obj = models.User.objects.get(user_name=username)
         if login_user_obj.pass_word == password:
+            logUtil.logger.info("用户："+username+"登录成功！")
             return True
         else:
+            logUtil.logger.info("用户：" + username + "用户名或密码错误，登录失败！")
             return False
     except Exception:
         return False
@@ -75,12 +79,16 @@ def checkPassword(req):
 @needUserCookies
 def main(req):
     global rootpath
-    try:
-        with open("./app/rootpath.conf") as root:
-            rootpath=root.read()
-    except Exception:
-        pass
-    print("view.rootpath"+rootpath)
+    # try:
+    #     with open("./app/rootpath.conf") as root:
+    #         rootpath=root.read()
+    # except Exception:
+    #     pass
+    if platform.system() == "Windows":
+        rootpath = "D:\web_file_root\SC-TestCase"
+    elif platform.system() == "Linux":
+        rootpath = "/opt/web_file_root"
+    logUtil.logger.info("view.rootpath"+rootpath)
     Folder = Utils.Folder(rootpath)
     dataJson = Folder.getFolderJson()
     language=req.COOKIES.get('language')
@@ -117,9 +125,9 @@ def deleteFiles(req):
 @needUserCookies
 def renameFiles(req):
     originPath = req.POST.get('originPath', None)
-    print("originPath:"+originPath)
+    logUtil.logger.info("originPath:"+originPath)
     newname = req.POST.get('newName', None)
-    print("newname:"+newname)
+    logUtil.logger.info("newname:"+newname)
     try:
         # test = os.path.split(originPath)[0]
         # print(test)
@@ -127,10 +135,11 @@ def renameFiles(req):
         print("rename path:"+renamePath)
         print(os.getpid())
         os.rename(str(originPath), str(renamePath))
+        logUtil.logger.info(str(originPath)+" 重命名为："+str(renamePath)+" is success!")
         result = True
     except BaseException as err:
         result = False
-        print(err)
+        logUtil.logger.exception("%s____%s" % (BaseException, err))
     response = {
         "ok": result,
 
@@ -199,11 +208,13 @@ def uploadFiles(req):
 def previewFiles(req):
     path = req.POST.get("path", None)
     ext = os.path.splitext(path)[1][1:].lower()
+    logUtil.logger.info("预览文件路径："+path)
     imgExtList = ["jpg", "png", "bmp"]
     textExtList = ["txt", "ini", "inf", "py", "c", "cpp", "java", "conf"]
     officeExtList = ["doc", "docx", "ppt", "pptx", "xls", "xlsx"]
     xmindExtList = ["xmind"]
     if ext in imgExtList:
+        logUtil.logger.info("预览IMG")
         with open(path, 'rb') as f:
             image_data = f.read()
         base64_data = base64.b64encode(image_data)
@@ -216,6 +227,7 @@ def previewFiles(req):
         return HttpResponse(json.dumps(response), content_type="application/json")
 
     if ext in textExtList:
+        logUtil.logger.info("预览Text")
         try:
             with open(path, 'r', encoding='utf-8') as f:
                 text = f.read()
@@ -233,14 +245,17 @@ def previewFiles(req):
         return HttpResponse(json.dumps(response), content_type="application/json")
 
     if ext in xmindExtList:
+        logUtil.logger.info("预览Xmind")
         try:
             # print(path)
             # workbook = xmind.load(path)
             # print(workbook.to_prettify_json())
             js_mind = JsMind.parse_xmind_to_jsmind()
             js_mind.load_xmind_file(path)
-        except Exception:
-            print("error !")
+            logUtil.logger.debug("jsmind json data is: ")
+            logUtil.logger.debug(js_mind.jsmind_json)
+        except BaseException as err:
+            logUtil.logger.exception("%s____%s" % (BaseException, err))
         response = {
             "data": js_mind.jsmind_json,
             "type": 'xmind'
@@ -248,20 +263,15 @@ def previewFiles(req):
         return HttpResponse(json.dumps(response), content_type="application/json")
 
     if ext in officeExtList:
+        logUtil.logger.info("预览office")
         try:
             t1 = PdfConverter.PdfConverter(path)
             t1.start()
             t1.join()
-            # with open(path, 'rb') as pdf:
-            #     response = HttpResponse(pdf.read(), mimetype='application/pdf')
-            #     response['Content-Disposition'] = 'inline;filename=some_file.pdf'
-            #     return response
-            # pdf.closed
-        except Exception:
-            print("error !")
+        except BaseException as err:
+            logUtil.logger.exception("%s____%s" % (BaseException, err))
         response = {
             "path": t1.get_result(),
-            # "path": "test.pdf",
             "type": 'pdf'
         }
         return HttpResponse(json.dumps(response), content_type="application/json")

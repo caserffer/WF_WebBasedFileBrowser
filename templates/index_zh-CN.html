@@ -395,7 +395,6 @@
                 }
 
             }
-
             var Node ={{dataJson|safe}};
 
             $(document).ready(function () {
@@ -457,19 +456,21 @@
                     }
                     if (backJson['type'] === "xmind")
                     {
-                        console.log(backJson['data'])
+                        {#console.log(backJson['data'])#}
                         jsmindContainerDiv = document.getElementById("jsmind_container");
                         previewDiv = document.getElementById("preview");
                         previewDiv.innerHTML = "";
-                        jsmindContainerDiv.style.width='850px';
+                        jsmindContainerDiv.innerHTML = "";
+                        {#jsmindContainerDiv.style.width='850px';#}
+                        jsmindContainerDiv.style.width='100%';
                         jsmindContainerDiv.style.height='620px';
                         jsmindContainerDiv.style.backgroundColor='#f4f4f4'
                         jsmindContainerDiv.style.border='solid 1px #ccc'
                         var mind = {
                         "meta": {
                             "name": "jsMind remote",
-                            "author": "hizzgdev@163.com",
-                            "version": "0.2"
+                            "author": "quanh@wangsu.com",
+                            "version": "0.1"
                         },
                         "format": "node_array",
                         "data":backJson['data']

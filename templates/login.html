@@ -10,10 +10,10 @@
         function uploadForm() {
             username = document.getElementById("username").value;
             password = document.getElementById("password").value;
-            en = document.getElementById("en").checked;
+            {#en = document.getElementById("en").checked;#}
             cn = document.getElementById("cn").checked;
-            if (en === true)
-                language = "en";
+            {#if (en === true)#}
+            {#    language = "en";#}
             if (cn === true)
                 language = "cn";
             const xmlhttp = new XMLHttpRequest();
@@ -81,14 +81,15 @@
                                 请输入至少 6 位，且包含大小写字母的密码
                             </div>
                         </div>
-                        <label class="mdui-radio">
-                            <input type="radio" name="language" id="en" checked/>
-                            <i class="mdui-radio-icon"></i>English
-                        </label>
                         <label class="mdui-radio" style="margin-left: 10px">
-                            <input type="radio" name="language" id="cn"/>
+                            <input type="radio" name="language" id="cn" checked/>
                             <i class="mdui-radio-icon"></i>中文
                         </label>
+{#                        <label class="mdui-radio">#}
+{#                            <input type="radio" name="language" id="en"/>#}
+{#                            <i class="mdui-radio-icon"></i>English#}
+{#                        </label>#}
+
 
 
                     </form>

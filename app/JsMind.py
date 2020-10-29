@@ -11,6 +11,7 @@
 
 import json
 import xmind
+from app import logUtil
 
 class parse_xmind_to_jsmind():
     '''
@@ -42,12 +43,15 @@ class parse_xmind_to_jsmind():
         :type sheet: xmind文件的sheet obj
         """
         root_topic_dic = {}
-        self.root_topic = sheet.getRootTopic()
+        try:
+            self.root_topic = sheet.getRootTopic()
+        except BaseException as err:
+            logUtil.logger.exception("%s____%s" % (BaseException, err))
         root_topic_dic['id'] = self.root_topic.getID()
         root_topic_dic['isroot'] = "true"
         root_topic_dic['topic'] = self.root_topic.getTitle()
         self.jsmind_json.append(root_topic_dic)
-        print(self.jsmind_json)
+        logUtil.logger.info(self.jsmind_json)
 
     def topic(self, topic):
         '''

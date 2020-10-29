@@ -1,7 +1,7 @@
 import json
 import os
-import xmind
-import pipes
+import time
+from app import logUtil
 import shutil
 from django.http import HttpResponse, Http404, FileResponse
 from django.utils.encoding import escape_uri_path
@@ -27,8 +27,10 @@ class Folder:
                     children.append({"name": i, "path": path + "/" + i})
             currentDict["children"] = children
             return children
-        except Exception as e:
-            currentDict = {"name": os.path.basename(path)+" Error"+repr(e), "open": False, "path": path}
+        except BaseException as err:
+            logUtil.logger.exception("%s____%s" % (BaseException, err))
+            currentDict = {"name": os.path.basename(path)+" Error"+repr(err), "open": False, "path": path}
+            logUtil.logger.exception("%s____%s" % (BaseException, currentDict))
             return currentDict
 
     def getFolderJson(self):
@@ -58,8 +60,8 @@ class fileOperator:
                 return
             else:
                 shutil.rmtree(path)
-        except:
-            pass
+        except BaseException as err:
+            logUtil.logger.exception("%s____%s" % (BaseException, err))
         return
 
     def copyFiles(self, list, targetPath,isMove=False):
@@ -130,34 +132,39 @@ class fileOperator:
             #     pass
 
     def mkdir(self,path):
-        temp=0
-        if os.path.isdir(path):
-            if os.path.exists(path+"/newFolder"):
-                while True:
-                    if not os.path.exists(path+"/newFolder"+str(temp)):
-                        os.mkdir(path+"/newFolder"+str(temp))
-                        break
-                    temp+=1
-            else:
-                os.mkdir(path + "/newFolder")
+        '''
+        使用时间戳作为新建文件夹后缀避免重名问题
+        :param path: 当前路径
+        :return:
+        '''
+        t = int(time.time())
+        logUtil.logger.info("当前路径：" + path)
+        path = path+"/newFolder_"+str(t)
+        logUtil.logger.info("创建新路径："+path)
+        try:
+            os.makedirs(path)
+            logUtil.logger.info("创建新路径：" + path+" is success!")
+        except BaseException as err:
+            logUtil.logger.exception("%s____%s" % (BaseException, err))
+        # temp=0
+        # if os.path.isdir(path):
+        #     if os.path.exists(path+"/newFolder"):
+        #         while True:
+        #             if not os.path.exists(path+"/newFolder"+str(temp)):
+        #                 os.mkdir(path+"/newFolder"+str(temp))
+        #                 break
+        #             temp+=1
+        #     else:
+        #         os.mkdir(path + "/newFolder")
+        #
+        # else:
+        #     if os.path.exists(os.path.dirname(path)+"/newFolder"):
+        #         while True:
+        #             if not os.path.exists(os.path.dirname(path)+"/newFolder"+str(temp)):
+        #                 os.mkdir(os.path.dirname(path)+"/newFolder"+str(temp))
+        #                 break
+        #             temp+=1
+        #     else:
+        #         os.mkdir(os.path.dirname(path) + "/newFolder")
 
-        else:
-            if os.path.exists(os.path.dirname(path)+"/newFolder"):
-                while True:
-                    if not os.path.exists(os.path.dirname(path)+"/newFolder"+str(temp)):
-                        os.mkdir(os.path.dirname(path)+"/newFolder"+str(temp))
-                        break
-                    temp+=1
-            else:
-                os.mkdir(os.path.dirname(path) + "/newFolder")
 
-class xmindParser:
-    def __init__(self, path=None):
-        self.path = path
-
-    def dict_to_prettify_json(data):
-        print(json.dumps(data, indent=4, separators=(',', ': ')))
-
-if __name__ == "__main__":
-    test = fileOperator()
-    test.forceRemove("/home/daiqiang/桌面/test")

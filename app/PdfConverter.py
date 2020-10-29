@@ -13,18 +13,43 @@
 
 import threading
 import os
-import pythoncom
+import platform
+import subprocess
+from app import logUtil
 
-from win32com.client import Dispatch, constants, gencache, DispatchEx
+try:
+    import pythoncom
+except ImportError:
+    pythoncom = None
+
+try:
+    from comtypes import client
+except ImportError:
+    client = None
+
+try:
+    from win32com.client import constants, gencache, Dispatch, DispatchEx
+except ImportError:
+    constants = None
+    gencache = None
+    Dispatch = None
+    DispatchEx = None
+
+
 
 
 class PdfConverter(threading.Thread):
     def __init__(self, office_file_path):
         threading.Thread.__init__(self)
         self.pdf_path = ""
-        self.root_path = "D:\web_file_root\SC-TestCase"
-        self.work_dir = "D:\pyproject\WF_WebBasedFileBrowser"
-        self.pdf_root = "static\pdfs"
+        if platform.system() == "Windows":
+            self.root_path = "D:\web_file_root\SC-TestCase"
+            self.work_dir = "D:\pyproject\WF_WebBasedFileBrowser"
+            self.pdf_root = "static\pdfs"
+        elif platform.system() == "Linux":
+            self.root_path = "/opt/web_file_root/SC-TestCase"
+            self.work_dir = "/opt/qc_web"
+            self.pdf_root = "static/pdfs"
         self.office_file_path = office_file_path
 
     def get_result(self):
@@ -40,24 +65,24 @@ class PdfConverter(threading.Thread):
         '''
         self.load_office_file(self.office_file_path)
         self.run_conver()
-        print("pdf save path :"+self.pdf_path)
+        logUtil.logger.info("pdf save path :"+self.pdf_path)
 
     def load_office_file(self, pathname):
         self._handle_postfix = ['doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx']
         self._filename_list = list()
         pathname = str(pathname)
         (filepath, tempfilename) = os.path.split(pathname)
-        print(filepath)
+        logUtil.logger.info(filepath)
         filepath = filepath.replace(self.root_path, "")
-        print("替换root_path后的filepath:"+filepath)
+        logUtil.logger.info("替换root_path后的filepath:"+filepath)
         # try:
         #     with open("./app/rootpath.conf") as root:
         #         self.root_path = root.read()
         # except Exception:
-        #     print("rootpath.conf read error!")
+        #     logUtil.logger.info("rootpath.conf read error!")
         #     raise
-        print("root_path:"+self.root_path)
-        print("_export_folder:"+self.work_dir+'/'+self.pdf_root+filepath)
+        logUtil.logger.info("root_path:"+self.root_path)
+        logUtil.logger.info("_export_folder:"+self.work_dir+'/'+self.pdf_root+filepath)
         self._export_folder = str(self.work_dir+'/'+self.pdf_root+filepath)
         # self._export_folder = filepath
         if not os.path.exists(self._export_folder):
@@ -92,14 +117,19 @@ class PdfConverter(threading.Thread):
         '''
         进行批量处理，根据后缀名调用函数执行转换
         '''
-        print('需要转换的文件数：', len(self._filename_list))
+        logUtil.logger.info('需要转换的文件数：'+str(len(self._filename_list)))
         for filename in self._filename_list:
             postfix = filename.split('.')[-1].lower()
             filename = str(filename)
-            funcCall = getattr(self, postfix)
-            print('原文件：', filename)
+            if platform.system() == "Linux":
+                logUtil.logger.info('linux环境！')
+                funcCall = getattr(self, "doc2pdf_linux")
+            elif platform.system() == "Windows":
+                logUtil.logger.info('windows环境！')
+                funcCall = getattr(self, postfix)
+            logUtil.logger.info('原文件：'+filename)
             funcCall(filename)
-        print('转换完成！')
+        logUtil.logger.info('转换完成！')
 
     def doc(self, filename):
         '''
@@ -110,7 +140,7 @@ class PdfConverter(threading.Thread):
         exportfile = os.path.join(self._export_folder, name)
         exportfile = str(exportfile)
         pythoncom.CoInitialize()
-        print('保存 PDF 文件：', exportfile)
+        logUtil.logger.info('保存 PDF 文件：'+exportfile)
         gencache.EnsureModule('{00020905-0000-0000-C000-000000000046}', 0, 8, 4)
         w = Dispatch("Word.Application")
         doc = w.Documents.Open(filename)
@@ -142,7 +172,7 @@ class PdfConverter(threading.Thread):
         books = xlApp.Workbooks.Open(filename, False)
         books.ExportAsFixedFormat(0, exportfile)
         books.Close(False)
-        print('保存 PDF 文件：', exportfile)
+        logUtil.logger.info('保存 PDF 文件：', exportfile)
         xlApp.Quit()
         self.pdf_path = self.pdf_url_exchange(exportfile)
 
@@ -161,11 +191,28 @@ class PdfConverter(threading.Thread):
         p = Dispatch("PowerPoint.Application")
         ppt = p.Presentations.Open(filename, False, False, False)
         ppt.ExportAsFixedFormat(exportfile, 2, PrintRange=None)
-        print('保存 PDF 文件：', exportfile)
+        logUtil.logger.info('保存 PDF 文件：', exportfile)
         p.Quit()
 
     def pptx(self, filename):
         self.ppt(filename)
+
+    def doc2pdf_linux(self, filename):
+        """
+        convert a doc/docx document to pdf format (linux only, requires libreoffice)
+        :param doc: path to document
+        """
+        name = self.exchange_suffix(filename)
+        exportfile = os.path.join(self._export_folder, name)
+        exportfile = str(exportfile)
+        cmd = 'libreoffice --headless --convert-to pdf:writer_pdf_Export'.split() + [filename] + ['--outdir'] + [self._export_folder]
+        p = subprocess.Popen(cmd, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+        p.wait(timeout=30)
+        stdout, stderr = p.communicate()
+        if stderr:
+            logUtil.logger.exception(stderr)
+            raise subprocess.SubprocessError(stderr)
+        self.pdf_path = self.pdf_url_exchange(exportfile)
 
     def exchange_suffix(self, filename):
         '''
