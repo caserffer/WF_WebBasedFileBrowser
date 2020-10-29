@@ -236,7 +236,7 @@ class PdfConverter(threading.Thread):
 #     folder = 'tmp'
 #     # pathname = os.path.join(os.path.abspath('.'), folder)
 #     # pathname = 'D:\1\2\3/00 123'
-#     pathname = 'D:\web_file_root\SC-TestCase/00_基础功能/001 配置/StreamCache配置项汇总-by黄美珊_2017.0323final.xlsx'
+#     pathname = 'D:\web_file_root\test.xlsx'
 #     # 也支持单个文件的转换
 #     # pathname = 'test.doc'
 #
